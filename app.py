@@ -43,7 +43,7 @@ def predict_sentiment(review):
 
 st.set_page_config(page_title="IMDB Movie Review Classifier by Hirushan", page_icon="🎬")
 
-st.title("🎬 IMDB Movie Review Sentiment Analyzer")
+st.title("🎬 IMDB Movie Review Classifier by Hirushan")
 st.write("Analyze the emotional tone of any movie review using a trained neural network model.")
 
 st.markdown(
