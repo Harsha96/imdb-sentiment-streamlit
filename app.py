@@ -41,7 +41,7 @@ def predict_sentiment(review):
 
 # Streamlit 
 
-st.set_page_config(page_title="Movie Review Sentiment Analyzer", page_icon="🎬")
+st.set_page_config(page_title="IMDB Movie Review Classifier by Hirushan", page_icon="🎬")
 
 st.title("🎬 IMDB Movie Review Sentiment Analyzer")
 st.write("Analyze the emotional tone of any movie review using a trained neural network model.")
