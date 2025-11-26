@@ -11,16 +11,12 @@ from keras.layers import TFSMLayer
 
 # model = tf.keras.models.load_model("model.h5")
 # change to cloud ompability
-
 model = TFSMLayer("model_saved", call_endpoint="serving_default")
+
 word_index = imdb.get_word_index()
 reverse_word_index = {value: key for key, value in word_index.items()}
-
-max_len = 1000 
-
-
+max_len = 1000
 # Text Preprocessing
-
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"[^a-zA-Z ]", "", text)
@@ -31,19 +27,21 @@ def preprocess_text(text):
     return padded
 
 
-
-# Prediction 
+# Prediction using TFSMLayer
 
 def predict_sentiment(review):
     processed = preprocess_text(review)
-    prob = model.predict(processed)[0][0]
+    processed = tf.convert_to_tensor(processed, dtype=tf.int32)
+
+    # TFSMLayer is called like a function (no predict())
+    output = model(processed)
+    prob = float(output.numpy()[0][0])
+
     sentiment = "Positive 😊" if prob >= 0.5 else "Negative 😞"
     return sentiment, prob
 
 
-
-# Streamlit 
-
+# Streamlit UI
 st.set_page_config(page_title="IMDB Movie Review Classifier", page_icon="🎬")
 
 st.title("🎬 IMDB Movie Review Classifier by Hirushan")
@@ -61,7 +59,7 @@ user_input = st.text_area(
     "Movie Review",
     placeholder="Type your movie review here...",
     height=150,
-    max_chars=1000 
+    max_chars=1000
 )
 
 if st.button("🔍 Classify Review"):
@@ -76,7 +74,6 @@ if st.button("🔍 Classify Review"):
         st.write(f"**Prediction Score:** `{score:.4f}`")
         st.markdown("---")
 
-     
         if score > 0.8:
             st.success("Model is highly confident in this prediction.")
         elif score > 0.5:
