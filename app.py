@@ -41,7 +41,7 @@ def predict_sentiment(review):
 
 # Streamlit 
 
-st.set_page_config(page_title="IMDB Movie Review Classifier by Hirushan", page_icon="🎬")
+st.set_page_config(page_title="IMDB Movie Review Classifier", page_icon="🎬")
 
 st.title("🎬 IMDB Movie Review Classifier by Hirushan")
 st.write("Analyze the emotional tone of any movie review using a trained neural network model.")
@@ -50,7 +50,7 @@ st.markdown(
     """
     ---
     ### **Enter your movie review below**
-    Our model will read your text and classify it as **Positive** or **Negative**.
+    My model will read your text and classify it as **Positive** or **Negative**.
     """
 )
 
