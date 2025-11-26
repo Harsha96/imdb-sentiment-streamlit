@@ -1,19 +1,17 @@
 import streamlit as st
 import tensorflow as tf
-import re
 from keras.layers import TFSMLayer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.datasets import imdb
+import re
 
 # -----------------------------
 # Load SavedModel using TFSMLayer
 # -----------------------------
-# Make sure "model_saved" folder is next to this app.py
-# Check the input name from SavedModel signature (here we assume 'input_1')
 model = TFSMLayer("model_saved", call_endpoint="serving_default")
 
 # -----------------------------
-# Load IMDB word index
+# IMDB word index
 # -----------------------------
 word_index = imdb.get_word_index()
 reverse_word_index = {value: key for key, value in word_index.items()}
@@ -21,32 +19,27 @@ reverse_word_index = {value: key for key, value in word_index.items()}
 max_len = 1000
 
 # -----------------------------
-# Text Preprocessing
+# Text preprocessing
 # -----------------------------
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"[^a-zA-Z ]", "", text)
     words = text.split()
-
-    # Encode words using IMDB word_index
-    encoded = [word_index.get(w, 2) + 3 for w in words]  # 2 = OOV token
+    encoded = [word_index.get(w, 2) + 3 for w in words]  # 2 = OOV
     padded = pad_sequences([encoded], maxlen=max_len)
     return padded
 
 # -----------------------------
-# Prediction using TFSMLayer
+# Prediction
 # -----------------------------
 def predict_sentiment(review):
     processed = preprocess_text(review)
-    processed = tf.convert_to_tensor(processed, dtype=tf.int32)
+    processed = tf.convert_to_tensor(processed, dtype=tf.float32)  # convert to float32
 
-    # ⚡ IMPORTANT: pass input as dict with key from SavedModel signature
-    # Change "input_1" if your SavedModel input has a different name
-    output = model({"input_1": processed})
+    # Pass tensor directly, because signature expects a tensor, not dict
+    output = model(processed)
 
-    # Convert to float
     prob = float(list(output.values())[0].numpy()[0][0])
-
     sentiment = "Positive 😊" if prob >= 0.5 else "Negative 😞"
     return sentiment, prob
 
