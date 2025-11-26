@@ -5,57 +5,46 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.datasets import imdb
 import re
 
-# -----------------------------
+
 # Load SavedModel using TFSMLayer
-# -----------------------------
+
 model = TFSMLayer("model_saved", call_endpoint="serving_default")
 
-# -----------------------------
+
 # IMDB word index
-# -----------------------------
 word_index = imdb.get_word_index()
 reverse_word_index = {value: key for key, value in word_index.items()}
 
 max_len = 1000
+# text preprocessing
 
-# -----------------------------
-# Text preprocessing
-# -----------------------------
 def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"[^a-zA-Z ]", "", text)
     words = text.split()
-
-    max_vocab = 10000  # match the training embedding
+    max_vocab = 10000  
     encoded = [min(word_index.get(w, 2) + 3, max_vocab - 1) for w in words]
     padded = pad_sequences([encoded], maxlen=max_len)
     return padded
 
-# -----------------------------
+
 # Prediction
-# -----------------------------
 def predict_sentiment(review):
-    # Preprocess text
-    processed = preprocess_text(review)  # shape (1, 1000), dtype=int32
-    
-    # Convert to float32 for TFSMLayer
+    processed = preprocess_text(review)
     processed = tf.convert_to_tensor(processed, dtype=tf.float32)
-    
     # Get model output
-    output = model(processed)  # TFSMLayer returns a dict
+    output = model(processed) 
     prob = float(list(output.values())[0].numpy()[0][0])
     sentiment = "Positive 😊" if prob >= 0.5 else "Negative 😞"
     return sentiment, prob
 
 
-# -----------------------------
-# Streamlit UI
-# -----------------------------
-st.set_page_config(page_title="IMDB Movie Review Classifier", page_icon="🎬")
 
+# Streamlit 
+# UI
+st.set_page_config(page_title="IMDB Movie Review Classifier", page_icon="🎬")
 st.title("🎬 IMDB Movie Review Classifier by Hirushan")
 st.write("Analyze the emotional tone of any movie review using a trained neural network model.")
-
 st.markdown(
     """
     ---
