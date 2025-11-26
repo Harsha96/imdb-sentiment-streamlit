@@ -57,7 +57,8 @@ st.markdown(
 user_input = st.text_area(
     "Movie Review",
     placeholder="Type your movie review here...",
-    height=150
+    height=150,
+    max_chars=1000 
 )
 
 if st.button("🔍 Classify Review"):
