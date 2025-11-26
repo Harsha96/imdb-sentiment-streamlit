@@ -8,8 +8,9 @@ from tensorflow.keras.datasets import imdb
 
 # Load Model 
 
-model = tf.keras.models.load_model("model.h5")
-
+# model = tf.keras.models.load_model("model.h5")
+# change to cloud ompability
+model = tf.keras.models.load_model("model_saved", compile=False)
 word_index = imdb.get_word_index()
 reverse_word_index = {value: key for key, value in word_index.items()}
 
