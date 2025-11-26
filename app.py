@@ -4,13 +4,15 @@ import numpy as np
 import re
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from tensorflow.keras.datasets import imdb
+from keras.layers import TFSMLayer
 
 
 # Load Model 
 
 # model = tf.keras.models.load_model("model.h5")
 # change to cloud ompability
-model = tf.keras.models.load_model("model_saved", compile=False)
+
+model = TFSMLayer("model_saved", call_endpoint="serving_default")
 word_index = imdb.get_word_index()
 reverse_word_index = {value: key for key, value in word_index.items()}
 
