@@ -33,15 +33,18 @@ def preprocess_text(text):
 # Prediction
 # -----------------------------
 def predict_sentiment(review):
-    processed = preprocess_text(review)
-    processed = tf.convert_to_tensor(processed, dtype=tf.float32)  # convert to float32
-
-    # Pass tensor directly, because signature expects a tensor, not dict
-    output = model(processed)
-
+    # Preprocess text
+    processed = preprocess_text(review)  # shape (1, 1000), dtype=int32
+    
+    # Convert to float32 for TFSMLayer
+    processed = tf.convert_to_tensor(processed, dtype=tf.float32)
+    
+    # Get model output
+    output = model(processed)  # TFSMLayer returns a dict
     prob = float(list(output.values())[0].numpy()[0][0])
     sentiment = "Positive 😊" if prob >= 0.5 else "Negative 😞"
     return sentiment, prob
+
 
 # -----------------------------
 # Streamlit UI
