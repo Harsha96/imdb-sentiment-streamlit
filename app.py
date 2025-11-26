@@ -25,7 +25,9 @@ def preprocess_text(text):
     text = text.lower()
     text = re.sub(r"[^a-zA-Z ]", "", text)
     words = text.split()
-    encoded = [word_index.get(w, 2) + 3 for w in words]  # 2 = OOV
+
+    max_vocab = 10000  # match the training embedding
+    encoded = [min(word_index.get(w, 2) + 3, max_vocab - 1) for w in words]
     padded = pad_sequences([encoded], maxlen=max_len)
     return padded
 
